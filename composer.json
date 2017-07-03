@@ -1,0 +1,24 @@
+{
+	"name": "aipng/security-password-management",
+	"description": "Password management package - standardize basic password handling for user accounts",
+	"type": "library",
+	"license": "BSD",
+	"authors": [
+		{
+			"name": "Karel Horsky",
+			"email": "karel.horsky@centrum.cz"
+		}
+	],
+	"autoload": {
+		"classmap": [
+			"src/"
+		]
+	},
+	"require": {
+		"php": ">=7.1"
+	},
+	"require-dev": {
+		"nette/tester": "^1.7"
+	},
+	"minimum-stability": "stable"
+}
