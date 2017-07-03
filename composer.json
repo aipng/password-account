@@ -1,6 +1,6 @@
 {
-	"name": "aipng/security-password-management",
-	"description": "Password management package - standardize basic password handling for user accounts",
+	"name": "aipng/password-account",
+	"description": "Password account management - standardize basic password handling for user accounts",
 	"type": "library",
 	"license": "BSD",
 	"authors": [
@@ -15,10 +15,16 @@
 		]
 	},
 	"require": {
-		"php": ">=7.1"
+		"php": ">=7.1",
+		"aipng/datetime-provider": "~0.1",
+		"nette/security": "~2.4",
+		"nette/utils": "~2.4.6"
 	},
 	"require-dev": {
-		"nette/tester": "^1.7"
+		"nette/tester": "~1.7",
+		"mockery/mockery": "~0.7",
+		"phpstan/phpstan": "~0.6.1",
+		"aipng/coding-standard": "~0.1.1"
 	},
 	"minimum-stability": "stable"
 }

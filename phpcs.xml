@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<ruleset name="AipNgSecurity Coding Standard" namespace="AipNg\CS\Standards">
+
+	<file>src</file>
+	<file>tests</file>
+
+	<arg name="basepath" value="." />
+	<arg name="extensions" value="php,phpt" />
+
+	<rule ref="vendor/aipng/coding-standard/CodingStandard/ruleset.xml" />
+
+	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
+		<properties>
+			<property name="rootNamespaces" type="array" value="
+				src=>AipNg,
+				tests=>AipNg\Tests,
+			" />
+			<property name="skipDirs" type="array" value="Exceptions," />
+			<property name="extensions" type="array" value="php,phpt," />
+		</properties>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.TypeHints.TypeHintDeclaration">
+		<properties>
+			<property name="usefulAnnotations" type="array" value="
+				@throws,
+				@dataProvider,
+			" />
+		</properties>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.Namespaces">
+		<exclude name="SlevomatCodingStandard.Namespaces.UseOnlyWhitelistedNamespaces" />
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameAfterKeyword">
+		<properties>
+			<property name="keywordsToCheck" type="array" value="
+					T_IMPLEMENTS,
+				" />
+		</properties>
+	</rule>
+
+	<rule ref="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly">
+		<properties>
+			<property name="allowFullyQualifiedGlobalClasses" type="boolean" value="true"></property>
+		</properties>
+	</rule>
+
+</ruleset>

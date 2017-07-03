@@ -1,0 +1,8 @@
+parameters:
+	autoload_directories:
+		- %rootDir%/../../../src
+		- %rootDir%/../../../tests
+
+	fileExtensions:
+		- php
+		- phpt
