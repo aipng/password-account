@@ -59,4 +59,4 @@ final class Md5TokenGeneratorTest extends TestCase
 }
 
 
-run(new Md5TokenGeneratorTest);
+(new Md5TokenGeneratorTest)->run();

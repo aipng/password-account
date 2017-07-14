@@ -301,4 +301,4 @@ final class PasswordFacadeTest extends TestCase
 }
 
 
-run(new PasswordFacadeTest);
+(new PasswordFacadeTest)->run();

@@ -11,7 +11,8 @@ use AipNg\Security\AccountNotFound;
 use AipNg\Security\AccountRepository;
 use AipNg\Security\PasswordAuthenticator;
 use AipNg\Security\PasswordHashProvider;
-use AipNg\Security\PasswordNotMatch;
+use Nette\Security\AuthenticationException;
+use Nette\Security\IAuthenticator;
 use Tester\Assert;
 use Tester\TestCase;
 
@@ -58,9 +59,11 @@ class PasswordAuthenticatorTest extends TestCase
 
 		$authenticator = new PasswordAuthenticator($repository, $hashProvider);
 
-		Assert::exception(function () use ($authenticator) {
+		$e = Assert::exception(function () use ($authenticator) {
 			$authenticator->authenticate([self::USER_NAME, self::PASSWORD]);
-		}, AccountNotFound::class);
+		}, AuthenticationException::class);
+
+		Assert::same(IAuthenticator::IDENTITY_NOT_FOUND, $e->getCode());
 	}
 
 
@@ -84,9 +87,34 @@ class PasswordAuthenticatorTest extends TestCase
 
 		$authenticator = new PasswordAuthenticator($repository, $hashProvider);
 
-		Assert::exception(function () use ($authenticator) {
+		$e = Assert::exception(function () use ($authenticator) {
 			$authenticator->authenticate([self::USER_NAME, self::PASSWORD]);
-		}, PasswordNotMatch::class);
+		}, AuthenticationException::class);
+
+		Assert::same(IAuthenticator::INVALID_CREDENTIAL, $e->getCode());
+	}
+
+
+	public function testThrowExceptionOnError(): void
+	{
+		$hashProvider = \Mockery::mock(PasswordHashProvider::class);
+		$databaseException = new \Exception;
+
+		$repository = \Mockery::mock(AccountRepository::class);
+		$repository
+			->shouldReceive('getByUserName')
+			->once()
+			->with(self::USER_NAME)
+			->andThrow($databaseException);
+
+		$authenticator = new PasswordAuthenticator($repository, $hashProvider);
+
+		$e = Assert::exception(function () use ($authenticator) {
+			$authenticator->authenticate([self::USER_NAME, self::PASSWORD]);
+		}, AuthenticationException::class);
+
+		Assert::same(IAuthenticator::FAILURE, $e->getCode());
+		Assert::same($databaseException, $e->getPrevious());
 	}
 
 
@@ -99,4 +127,4 @@ class PasswordAuthenticatorTest extends TestCase
 }
 
 
-run(new PasswordAuthenticatorTest);
+(new PasswordAuthenticatorTest)->run();

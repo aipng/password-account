@@ -47,4 +47,4 @@ final class DefaultHashProviderTest extends TestCase
 }
 
 
-run(new DefaultHashProviderTest);
+(new DefaultHashProviderTest)->run();

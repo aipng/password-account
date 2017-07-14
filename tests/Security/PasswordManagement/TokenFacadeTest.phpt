@@ -133,4 +133,4 @@ final class TokenFacadeTest extends TestCase
 }
 
 
-run(new TokenFacadeTest);
+(new TokenFacadeTest)->run();
