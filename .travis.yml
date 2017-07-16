@@ -1,0 +1,28 @@
+language: php
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+php:
+  - 7.1
+
+matrix:
+  fast_finish: true
+
+before_install:
+  - composer self-update
+
+install:
+  - composer install --no-interaction --no-suggest --no-progress
+
+script:
+  - ./vendor/bin/tester -s ./tests/
+  - ./vendor/bin/phpcs
+  - ./vendor/bin/phpstan analyze -l 5 ./src/ ./tests/ --autoload-file=./vendor/autoload.php
+
+after_failure:
+  # Vytiskne obsah souborů *.actual
+  - 'for i in $(find ./tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done'
