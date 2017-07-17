@@ -31,6 +31,9 @@ interface Account extends IIdentity
 	public function changePasswordWithToken(string $token, string $newPassword, PasswordHashProvider $hashProvider): void;
 
 
+	public function isTokenValid(string $token, \DateTimeImmutable $validTo): bool;
+
+
 	public function setPasswordToken(SecureToken $token): void;
 
 
