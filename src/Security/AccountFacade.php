@@ -10,7 +10,7 @@ interface AccountFacade
 	/**
 	 * @param \AipNg\Security\Account $account
 	 *
-	 * @throws \AipNg\Security\AccountNotSaved
+	 * @throws \AipNg\Security\AccountNotSavedException
 	 */
 	public function save(Account $account): void;
 

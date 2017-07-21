@@ -4,41 +4,35 @@ declare(strict_types = 1);
 
 namespace AipNg\Security\PasswordManagement;
 
+use AipNg\Security\Account;
 use AipNg\Security\AccountFacade;
-use AipNg\Security\AccountRepository;
 
-final class TokenFacade
+final class AccountTokenFacade
 {
 
 	/** @var \AipNg\Security\PasswordManagement\TokenGenerator */
 	private $generator;
 
-	/** @var \AipNg\Security\AccountRepository */
-	private $accountRepository;
-
 	/** @var \AipNg\Security\AccountFacade */
 	private $accountFacade;
 
 
-	public function __construct(TokenGenerator $generator, AccountRepository $accountRepository, AccountFacade $accountFacade)
+	public function __construct(TokenGenerator $generator, AccountFacade $accountFacade)
 	{
 		$this->generator = $generator;
-		$this->accountRepository = $accountRepository;
 		$this->accountFacade = $accountFacade;
 	}
 
 
 	/**
-	 * @param string $userName
+	 * @param \AipNg\Security\Account $account
 	 *
 	 * @return \AipNg\Security\PasswordManagement\GeneratedToken
 	 *
-	 * @throws \AipNg\Security\AccountNotFound
-	 * @throws \AipNg\Security\AccountNotSaved
+	 * @throws \AipNg\Security\AccountNotSavedException
 	 */
-	public function generateNewToken(string $userName): GeneratedToken
+	public function generateTokenForAccount(Account $account): GeneratedToken
 	{
-		$account = $this->accountRepository->getByUserName($userName);
 		$token = $this->generator->generate();
 
 		$account->setPasswordToken($token);

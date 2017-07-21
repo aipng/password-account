@@ -34,9 +34,9 @@ final class PasswordFacade
 	 * @param string $currentPassword
 	 * @param string $newPassword
 	 *
-	 * @throws \AipNg\Security\AccountNotFound
-	 * @throws \AipNg\Security\PasswordNotMatch
-	 * @throws \AipNg\Security\AccountNotSaved
+	 * @throws \AipNg\Security\AccountNotFoundException
+	 * @throws \AipNg\Security\PasswordNotMatchException
+	 * @throws \AipNg\Security\AccountNotSavedException
 	 */
 	public function changePassword(string $userName, string $currentPassword, string $newPassword): void
 	{
@@ -52,10 +52,10 @@ final class PasswordFacade
 	 * @param string $token
 	 * @param string $newPassword
 	 *
-	 * @throws \AipNg\Security\AccountNotFound
-	 * @throws \AipNg\Security\TokenNotMatch
-	 * @throws \AipNg\Security\TokenExpired
-	 * @throws \AipNg\Security\AccountNotSaved
+	 * @throws \AipNg\Security\AccountNotFoundException
+	 * @throws \AipNg\Security\TokenNotMatchException
+	 * @throws \AipNg\Security\TokenExpiredException
+	 * @throws \AipNg\Security\AccountNotSavedException
 	 */
 	public function changePasswordWithToken(string $token, string $newPassword): void
 	{

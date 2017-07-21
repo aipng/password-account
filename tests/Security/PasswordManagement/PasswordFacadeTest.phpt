@@ -8,14 +8,14 @@ require __DIR__ . '/../../bootstrap.php';
 
 use AipNg\Security\Account;
 use AipNg\Security\AccountFacade;
-use AipNg\Security\AccountNotFound;
-use AipNg\Security\AccountNotSaved;
+use AipNg\Security\AccountNotFoundException;
+use AipNg\Security\AccountNotSavedException;
 use AipNg\Security\AccountRepository;
 use AipNg\Security\PasswordHashProvider;
 use AipNg\Security\PasswordManagement\PasswordFacade;
-use AipNg\Security\PasswordNotMatch;
-use AipNg\Security\TokenExpired;
-use AipNg\Security\TokenNotMatch;
+use AipNg\Security\PasswordNotMatchException;
+use AipNg\Security\TokenExpiredException;
+use AipNg\Security\TokenNotMatchException;
 use Mockery\MockInterface;
 use Tester\Assert;
 use Tester\TestCase;
@@ -58,7 +58,7 @@ final class PasswordFacadeTest extends TestCase
 			->shouldReceive('getByUserName')
 			->once()
 			->with($userName)
-			->andThrow(AccountNotFound::class);
+			->andThrow(AccountNotFoundException::class);
 
 		$facade = new PasswordFacade(
 			$repository,
@@ -68,7 +68,7 @@ final class PasswordFacadeTest extends TestCase
 
 		Assert::exception(function () use ($facade, $userName) {
 			$facade->changePassword($userName, 'current-password', 'new-password');
-		}, AccountNotFound::class);
+		}, AccountNotFoundException::class);
 	}
 
 
@@ -85,7 +85,7 @@ final class PasswordFacadeTest extends TestCase
 			->shouldReceive('changePassword')
 			->once()
 			->with($currentPassword, $newPassword, $hashProvider)
-			->andThrow(PasswordNotMatch::class);
+			->andThrow(PasswordNotMatchException::class);
 
 		$facade = new PasswordFacade(
 			$this->mockRepositoryGetByUserName($userName, $account),
@@ -95,7 +95,7 @@ final class PasswordFacadeTest extends TestCase
 
 		Assert::exception(function () use ($facade, $userName, $currentPassword, $newPassword) {
 			$facade->changePassword($userName, $currentPassword, $newPassword);
-		}, PasswordNotMatch::class);
+		}, PasswordNotMatchException::class);
 	}
 
 
@@ -113,7 +113,7 @@ final class PasswordFacadeTest extends TestCase
 		$accountFacade = \Mockery::mock(AccountFacade::class);
 		$accountFacade
 			->shouldReceive('save')
-			->andThrow(AccountNotSaved::class);
+			->andThrow(AccountNotSavedException::class);
 
 		$facade = new PasswordFacade(
 			$this->mockRepositoryGetByUserName($userName, $account),
@@ -123,7 +123,7 @@ final class PasswordFacadeTest extends TestCase
 
 		Assert::exception(function () use ($facade, $userName, $currentPassword, $newPassword) {
 			$facade->changePassword($userName, $currentPassword, $newPassword);
-		}, AccountNotSaved::class);
+		}, AccountNotSavedException::class);
 	}
 
 
@@ -161,7 +161,7 @@ final class PasswordFacadeTest extends TestCase
 			->shouldReceive('getBySecureToken')
 			->once()
 			->with($token)
-			->andThrow(AccountNotFound::class);
+			->andThrow(AccountNotFoundException::class);
 
 		$facade = new PasswordFacade(
 			$repository,
@@ -171,7 +171,7 @@ final class PasswordFacadeTest extends TestCase
 
 		Assert::exception(function () use ($facade, $token) {
 			$facade->changePasswordWithToken($token, 'new-password');
-		}, AccountNotFound::class);
+		}, AccountNotFoundException::class);
 	}
 
 
@@ -187,7 +187,7 @@ final class PasswordFacadeTest extends TestCase
 			->shouldReceive('changePasswordWithToken')
 			->once()
 			->with($token, $newPassword, $hashProvider)
-			->andThrow(TokenNotMatch::class);
+			->andThrow(TokenNotMatchException::class);
 
 		$facade = new PasswordFacade(
 			$this->mockRepositoryGetBySecureToken($token, $account),
@@ -197,7 +197,7 @@ final class PasswordFacadeTest extends TestCase
 
 		Assert::exception(function () use ($facade, $token, $newPassword) {
 			$facade->changePasswordWithToken($token, $newPassword);
-		}, TokenNotMatch::class);
+		}, TokenNotMatchException::class);
 	}
 
 
@@ -213,7 +213,7 @@ final class PasswordFacadeTest extends TestCase
 			->shouldReceive('changePasswordWithToken')
 			->once()
 			->with($token, $newPassword, $hashProvider)
-			->andThrow(TokenExpired::class);
+			->andThrow(TokenExpiredException::class);
 
 		$facade = new PasswordFacade(
 			$this->mockRepositoryGetBySecureToken($token, $account),
@@ -223,7 +223,7 @@ final class PasswordFacadeTest extends TestCase
 
 		Assert::exception(function () use ($facade, $token, $newPassword) {
 			$facade->changePasswordWithToken($token, $newPassword);
-		}, TokenExpired::class);
+		}, TokenExpiredException::class);
 	}
 
 
@@ -243,7 +243,7 @@ final class PasswordFacadeTest extends TestCase
 		$accountFacade = \Mockery::mock(AccountFacade::class);
 		$accountFacade
 			->shouldReceive('save')
-			->andThrow(AccountNotSaved::class);
+			->andThrow(AccountNotSavedException::class);
 
 		$facade = new PasswordFacade(
 			$this->mockRepositoryGetBySecureToken($token, $account),
@@ -253,7 +253,7 @@ final class PasswordFacadeTest extends TestCase
 
 		Assert::exception(function () use ($facade, $token, $newPassword) {
 			$facade->changePasswordWithToken($token, $newPassword);
-		}, AccountNotSaved::class);
+		}, AccountNotSavedException::class);
 	}
 
 

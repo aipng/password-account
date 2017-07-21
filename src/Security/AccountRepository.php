@@ -12,7 +12,7 @@ interface AccountRepository
 	 *
 	 * @return \AipNg\Security\Account
 	 *
-	 * @throws \AipNg\Security\AccountNotFound
+	 * @throws \AipNg\Security\AccountNotFoundException
 	 */
 	public function getByUserName(string $userName): Account;
 
@@ -22,7 +22,7 @@ interface AccountRepository
 	 *
 	 * @return \AipNg\Security\Account
 	 *
-	 * @throws \AipNg\Security\AccountNotFound
+	 * @throws \AipNg\Security\AccountNotFoundException
 	 */
 	public function getBySecureToken(string $token): Account;
 

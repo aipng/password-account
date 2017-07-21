@@ -7,7 +7,7 @@ namespace AipNg\Tests\Security;
 require __DIR__ . '/../bootstrap.php';
 
 use AipNg\Security\Account;
-use AipNg\Security\AccountNotFound;
+use AipNg\Security\AccountNotFoundException;
 use AipNg\Security\AccountRepository;
 use AipNg\Security\PasswordAuthenticator;
 use AipNg\Security\PasswordHashProvider;
@@ -55,7 +55,7 @@ class PasswordAuthenticatorTest extends TestCase
 		$repository
 			->shouldReceive('getByUserName')
 			->once()
-			->andThrow(AccountNotFound::class);
+			->andThrow(AccountNotFoundException::class);
 
 		$authenticator = new PasswordAuthenticator($repository, $hashProvider);
 

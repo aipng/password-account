@@ -15,7 +15,7 @@ interface Account extends IIdentity
 	 * @param string $newPasswordHash
 	 * @param \AipNg\Security\PasswordHashProvider $hashProvider
 	 *
-	 * @throws \AipNg\Security\PasswordNotMatch
+	 * @throws \AipNg\Security\PasswordNotMatchException
 	 */
 	public function changePassword(string $currentPassword, string $newPasswordHash, PasswordHashProvider $hashProvider): void;
 
@@ -25,8 +25,8 @@ interface Account extends IIdentity
 	 * @param string $newPassword
 	 * @param \AipNg\Security\PasswordHashProvider $hashProvider
 	 *
-	 * @throws \AipNg\Security\TokenNotMatch
-	 * @throws \AipNg\Security\TokenExpired
+	 * @throws \AipNg\Security\TokenNotMatchException
+	 * @throws \AipNg\Security\TokenExpiredException
 	 */
 	public function changePasswordWithToken(string $token, string $newPassword, PasswordHashProvider $hashProvider): void;
 

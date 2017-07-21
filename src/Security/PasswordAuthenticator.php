@@ -33,8 +33,8 @@ final class PasswordAuthenticator implements
 	 *
 	 * @throws \Nette\Security\AuthenticationException
 	 *
-	 * @throws \AipNg\Security\AccountNotFound
-	 * @throws \AipNg\Security\PasswordNotMatch
+	 * @throws \AipNg\Security\AccountNotFoundException
+	 * @throws \AipNg\Security\PasswordNotMatchException
 	 */
 	public function authenticate(array $credentials): IIdentity
 	{
@@ -42,7 +42,7 @@ final class PasswordAuthenticator implements
 
 		try {
 			$account = $this->repository->getByUserName($userName);
-		} catch (AccountNotFound $e) {
+		} catch (AccountNotFoundException $e) {
 			throw new AuthenticationException('User account not found.', IAuthenticator::IDENTITY_NOT_FOUND, $e);
 		} catch (\Throwable $e) {
 			throw new AuthenticationException('Authentication failed.', IAuthenticator::FAILURE, $e);
