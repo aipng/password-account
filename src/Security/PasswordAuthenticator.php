@@ -4,9 +4,11 @@ declare(strict_types = 1);
 
 namespace AipNg\Security;
 
+use AipNg\Security\Events\AuthenticationFailedEvent;
 use Nette\Security\AuthenticationException;
 use Nette\Security\IAuthenticator;
 use Nette\Security\IIdentity;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 final class PasswordAuthenticator implements
 	\Nette\Security\IAuthenticator
@@ -18,11 +20,19 @@ final class PasswordAuthenticator implements
 	/** @var \AipNg\Security\PasswordHashProvider */
 	private $hashProvider;
 
+	/** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface */
+	private $eventDispatcher;
 
-	public function __construct(AccountRepository $repository, PasswordHashProvider $hashProvider)
+
+	public function __construct(
+		AccountRepository $repository,
+		PasswordHashProvider $hashProvider,
+		EventDispatcherInterface $eventDispatcher
+	)
 	{
 		$this->repository = $repository;
 		$this->hashProvider = $hashProvider;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 
 
@@ -49,10 +59,20 @@ final class PasswordAuthenticator implements
 		}
 
 		if (!$account->verifyPassword($password, $this->hashProvider)) {
+			$this->dispatchAuthenticationFailedEvent($account);
+
 			throw new AuthenticationException('Invalid password.', IAuthenticator::INVALID_CREDENTIAL);
 		}
 
 		return $account;
+	}
+
+
+	private function dispatchAuthenticationFailedEvent(Account $account): void
+	{
+		$event = new AuthenticationFailedEvent($account);
+
+		$this->eventDispatcher->dispatch(AuthenticationFailedEvent::class, $event);
 	}
 
 }

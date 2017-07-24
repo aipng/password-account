@@ -4,9 +4,12 @@ declare(strict_types = 1);
 
 namespace AipNg\Security\PasswordManagement;
 
+use AipNg\Security\Account;
 use AipNg\Security\AccountFacade;
 use AipNg\Security\AccountRepository;
+use AipNg\Security\Events\PasswordChangedEvent;
 use AipNg\Security\PasswordHashProvider;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 final class PasswordFacade
 {
@@ -20,12 +23,21 @@ final class PasswordFacade
 	/** @var \AipNg\Security\PasswordHashProvider */
 	private $hashProvider;
 
+	/** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface */
+	private $eventDispatcher;
 
-	public function __construct(AccountRepository $accountRepository, AccountFacade $accountFacade, PasswordHashProvider $hashProvider)
+
+	public function __construct(
+		AccountRepository $accountRepository,
+		AccountFacade $accountFacade,
+		PasswordHashProvider $hashProvider,
+		EventDispatcherInterface $eventDispatcher
+	)
 	{
 		$this->accountRepository = $accountRepository;
 		$this->accountFacade = $accountFacade;
 		$this->hashProvider = $hashProvider;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 
 
@@ -45,6 +57,8 @@ final class PasswordFacade
 		$account->changePassword($currentPassword, $newPassword, $this->hashProvider);
 
 		$this->accountFacade->save($account);
+
+		$this->dispatchPasswordChangedEvent($account);
 	}
 
 
@@ -64,6 +78,16 @@ final class PasswordFacade
 		$account->changePasswordWithToken($token, $newPassword, $this->hashProvider);
 
 		$this->accountFacade->save($account);
+
+		$this->dispatchPasswordChangedEvent($account);
+	}
+
+
+	private function dispatchPasswordChangedEvent(Account $account): void
+	{
+		$event = new PasswordChangedEvent($account);
+
+		$this->eventDispatcher->dispatch(PasswordChangedEvent::class, $event);
 	}
 
 }

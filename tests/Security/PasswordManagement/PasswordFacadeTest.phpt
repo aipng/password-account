@@ -11,12 +11,14 @@ use AipNg\Security\AccountFacade;
 use AipNg\Security\AccountNotFoundException;
 use AipNg\Security\AccountNotSavedException;
 use AipNg\Security\AccountRepository;
+use AipNg\Security\Events\PasswordChangedEvent;
 use AipNg\Security\PasswordHashProvider;
 use AipNg\Security\PasswordManagement\PasswordFacade;
 use AipNg\Security\PasswordNotMatchException;
 use AipNg\Security\TokenExpiredException;
 use AipNg\Security\TokenNotMatchException;
 use Mockery\MockInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Tester\Assert;
 use Tester\TestCase;
 
@@ -37,10 +39,17 @@ final class PasswordFacadeTest extends TestCase
 			->once()
 			->with($currentPassword, $newPassword, $hashProvider);
 
+		$eventDispatcher = $this->getEventDispatcherMock();
+		$eventDispatcher
+			->shouldReceive('dispatch')
+			->once()
+			->with(PasswordChangedEvent::class, PasswordChangedEvent::class);
+
 		$facade = new PasswordFacade(
 			$this->mockRepositoryGetByUserName($userName, $account),
 			$this->mockAccountFacade(),
-			$hashProvider
+			$hashProvider,
+			$eventDispatcher
 		);
 
 		$facade->changePassword($userName, $currentPassword, $newPassword);
@@ -63,7 +72,8 @@ final class PasswordFacadeTest extends TestCase
 		$facade = new PasswordFacade(
 			$repository,
 			$this->mockAccountFacade(),
-			\Mockery::mock(PasswordHashProvider::class)
+			\Mockery::mock(PasswordHashProvider::class),
+			$this->getEventDispatcherMock()
 		);
 
 		Assert::exception(function () use ($facade, $userName) {
@@ -90,7 +100,8 @@ final class PasswordFacadeTest extends TestCase
 		$facade = new PasswordFacade(
 			$this->mockRepositoryGetByUserName($userName, $account),
 			$this->mockAccountFacade(),
-			$hashProvider
+			$hashProvider,
+			$this->getEventDispatcherMock()
 		);
 
 		Assert::exception(function () use ($facade, $userName, $currentPassword, $newPassword) {
@@ -118,7 +129,8 @@ final class PasswordFacadeTest extends TestCase
 		$facade = new PasswordFacade(
 			$this->mockRepositoryGetByUserName($userName, $account),
 			$accountFacade,
-			\Mockery::mock(PasswordHashProvider::class)
+			\Mockery::mock(PasswordHashProvider::class),
+			$this->getEventDispatcherMock()
 		);
 
 		Assert::exception(function () use ($facade, $userName, $currentPassword, $newPassword) {
@@ -140,10 +152,16 @@ final class PasswordFacadeTest extends TestCase
 			->once()
 			->with($token, $newPassword, $hashProvider);
 
+		$eventDispatcher = $this->getEventDispatcherMock();
+		$eventDispatcher
+			->shouldReceive('dispatch')
+			->once();
+
 		$facade = new PasswordFacade(
 			$this->mockRepositoryGetBySecureToken($token, $account),
 			$this->mockAccountFacade(),
-			$hashProvider
+			$hashProvider,
+			$eventDispatcher
 		);
 
 		$facade->changePasswordWithToken($token, $newPassword);
@@ -166,7 +184,8 @@ final class PasswordFacadeTest extends TestCase
 		$facade = new PasswordFacade(
 			$repository,
 			$this->mockAccountFacade(),
-			\Mockery::mock(PasswordHashProvider::class)
+			\Mockery::mock(PasswordHashProvider::class),
+			$this->getEventDispatcherMock()
 		);
 
 		Assert::exception(function () use ($facade, $token) {
@@ -192,7 +211,8 @@ final class PasswordFacadeTest extends TestCase
 		$facade = new PasswordFacade(
 			$this->mockRepositoryGetBySecureToken($token, $account),
 			$this->mockAccountFacade(),
-			$hashProvider
+			$hashProvider,
+			$this->getEventDispatcherMock()
 		);
 
 		Assert::exception(function () use ($facade, $token, $newPassword) {
@@ -218,7 +238,8 @@ final class PasswordFacadeTest extends TestCase
 		$facade = new PasswordFacade(
 			$this->mockRepositoryGetBySecureToken($token, $account),
 			$this->mockAccountFacade(),
-			$hashProvider
+			$hashProvider,
+			$this->getEventDispatcherMock()
 		);
 
 		Assert::exception(function () use ($facade, $token, $newPassword) {
@@ -248,7 +269,8 @@ final class PasswordFacadeTest extends TestCase
 		$facade = new PasswordFacade(
 			$this->mockRepositoryGetBySecureToken($token, $account),
 			$accountFacade,
-			$hashProvider
+			$hashProvider,
+			$this->getEventDispatcherMock()
 		);
 
 		Assert::exception(function () use ($facade, $token, $newPassword) {
@@ -263,6 +285,12 @@ final class PasswordFacadeTest extends TestCase
 		$mock->shouldReceive('save');
 
 		return $mock;
+	}
+
+
+	private function getEventDispatcherMock(): MockInterface
+	{
+		return \Mockery::mock(EventDispatcherInterface::class);
 	}
 
 

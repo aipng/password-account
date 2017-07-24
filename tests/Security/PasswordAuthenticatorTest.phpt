@@ -9,10 +9,13 @@ require __DIR__ . '/../bootstrap.php';
 use AipNg\Security\Account;
 use AipNg\Security\AccountNotFoundException;
 use AipNg\Security\AccountRepository;
+use AipNg\Security\Events\AuthenticationFailedEvent;
 use AipNg\Security\PasswordAuthenticator;
 use AipNg\Security\PasswordHashProvider;
+use Mockery\MockInterface;
 use Nette\Security\AuthenticationException;
 use Nette\Security\IAuthenticator;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Tester\Assert;
 use Tester\TestCase;
 
@@ -41,7 +44,7 @@ class PasswordAuthenticatorTest extends TestCase
 			->with(self::USER_NAME)
 			->andReturn($account);
 
-		$authenticator = new PasswordAuthenticator($repository, $hashProvider);
+		$authenticator = new PasswordAuthenticator($repository, $hashProvider, $this->getEventDispatcherMock());
 
 		Assert::same($account, $authenticator->authenticate([self::USER_NAME, self::PASSWORD]));
 	}
@@ -57,7 +60,7 @@ class PasswordAuthenticatorTest extends TestCase
 			->once()
 			->andThrow(AccountNotFoundException::class);
 
-		$authenticator = new PasswordAuthenticator($repository, $hashProvider);
+		$authenticator = new PasswordAuthenticator($repository, $hashProvider, $this->getEventDispatcherMock());
 
 		$e = Assert::exception(function () use ($authenticator) {
 			$authenticator->authenticate([self::USER_NAME, self::PASSWORD]);
@@ -85,7 +88,13 @@ class PasswordAuthenticatorTest extends TestCase
 			->with(self::USER_NAME)
 			->andReturn($account);
 
-		$authenticator = new PasswordAuthenticator($repository, $hashProvider);
+		$eventDispatcher = $this->getEventDispatcherMock();
+		$eventDispatcher
+			->shouldReceive('dispatch')
+			->once()
+			->with(AuthenticationFailedEvent::class, AuthenticationFailedEvent::class);
+
+		$authenticator = new PasswordAuthenticator($repository, $hashProvider, $eventDispatcher);
 
 		$e = Assert::exception(function () use ($authenticator) {
 			$authenticator->authenticate([self::USER_NAME, self::PASSWORD]);
@@ -107,7 +116,7 @@ class PasswordAuthenticatorTest extends TestCase
 			->with(self::USER_NAME)
 			->andThrow($databaseException);
 
-		$authenticator = new PasswordAuthenticator($repository, $hashProvider);
+		$authenticator = new PasswordAuthenticator($repository, $hashProvider, $this->getEventDispatcherMock());
 
 		$e = Assert::exception(function () use ($authenticator) {
 			$authenticator->authenticate([self::USER_NAME, self::PASSWORD]);
@@ -115,6 +124,12 @@ class PasswordAuthenticatorTest extends TestCase
 
 		Assert::same(IAuthenticator::FAILURE, $e->getCode());
 		Assert::same($databaseException, $e->getPrevious());
+	}
+
+
+	private function getEventDispatcherMock(): MockInterface
+	{
+		return \Mockery::mock(EventDispatcherInterface::class);
 	}
 
 

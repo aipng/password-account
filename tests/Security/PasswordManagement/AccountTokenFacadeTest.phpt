@@ -9,10 +9,12 @@ require __DIR__ . '/../../bootstrap.php';
 use AipNg\Security\Account;
 use AipNg\Security\AccountFacade;
 use AipNg\Security\AccountNotSavedException;
+use AipNg\Security\Events\AccountTokenGeneratedEvent;
 use AipNg\Security\PasswordManagement\AccountTokenFacade;
 use AipNg\Security\PasswordManagement\SecureToken;
 use AipNg\Security\PasswordManagement\TokenGenerator;
 use Mockery\MockInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Tester\Assert;
 use Tester\TestCase;
 
@@ -37,7 +39,13 @@ final class AccountTokenFacadeTest extends TestCase
 			->once()
 			->with($account);
 
-		$facade = new AccountTokenFacade($this->mockGenerator($secureToken), $accountFacade);
+		$eventDispatcher = $this->getEventDispatcherMock();
+		$eventDispatcher
+			->shouldReceive('dispatch')
+			->once()
+			->with(AccountTokenGeneratedEvent::class, AccountTokenGeneratedEvent::class);
+
+		$facade = new AccountTokenFacade($this->mockGenerator($secureToken), $accountFacade, $eventDispatcher);
 
 		$generatedToken = $facade->generateTokenForAccount($account);
 
@@ -65,7 +73,7 @@ final class AccountTokenFacadeTest extends TestCase
 			->with($account)
 			->andThrow(AccountNotSavedException::class);
 
-		$facade = new AccountTokenFacade($this->mockGenerator($secureToken), $accountFacade);
+		$facade = new AccountTokenFacade($this->mockGenerator($secureToken), $accountFacade, $this->getEventDispatcherMock());
 
 		Assert::exception(function () use ($facade, $account) {
 			$facade->generateTokenForAccount($account);
@@ -81,6 +89,12 @@ final class AccountTokenFacadeTest extends TestCase
 			->andReturn($token);
 
 		return $mock;
+	}
+
+
+	private function getEventDispatcherMock(): MockInterface
+	{
+		return \Mockery::mock(EventDispatcherInterface::class);
 	}
 
 

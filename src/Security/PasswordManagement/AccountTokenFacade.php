@@ -6,6 +6,8 @@ namespace AipNg\Security\PasswordManagement;
 
 use AipNg\Security\Account;
 use AipNg\Security\AccountFacade;
+use AipNg\Security\Events\AccountTokenGeneratedEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 final class AccountTokenFacade
 {
@@ -16,11 +18,15 @@ final class AccountTokenFacade
 	/** @var \AipNg\Security\AccountFacade */
 	private $accountFacade;
 
+	/** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface */
+	private $eventDispatcher;
 
-	public function __construct(TokenGenerator $generator, AccountFacade $accountFacade)
+
+	public function __construct(TokenGenerator $generator, AccountFacade $accountFacade, EventDispatcherInterface $eventDispatcher)
 	{
 		$this->generator = $generator;
 		$this->accountFacade = $accountFacade;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 
 
@@ -38,7 +44,17 @@ final class AccountTokenFacade
 		$account->setPasswordToken($token);
 		$this->accountFacade->save($account);
 
-		return new GeneratedToken($account, $token);
+		$generatedToken = new GeneratedToken($account, $token);
+
+		$this->dispatchEvent($generatedToken);
+
+		return $generatedToken;
+	}
+
+
+	private function dispatchEvent(GeneratedToken $token): void
+	{
+		$this->eventDispatcher->dispatch(AccountTokenGeneratedEvent::class, new AccountTokenGeneratedEvent($token));
 	}
 
 }
