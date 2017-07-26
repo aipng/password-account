@@ -12,7 +12,7 @@ final class DefaultHashProvider implements
 	private $passwordCost;
 
 
-	public function __construct(?int $passwordCost = 12)
+	public function __construct(?int $passwordCost = 10)
 	{
 		$this->passwordCost = $passwordCost;
 	}
