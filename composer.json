@@ -25,7 +25,6 @@
 		"nette/tester": "^1.7.1",
 		"mockery/mockery": "^0.9.9",
 		"phpstan/phpstan": "^0.6.4",
-		"aipng/coding-standard": "^0.2.0",
 		"nette/di": "^2.4.9"
 	},
 	"suggest": {

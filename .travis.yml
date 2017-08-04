@@ -17,11 +17,12 @@ before_install:
 
 install:
   - composer install --no-interaction --no-suggest --no-progress
+  - composer create-project aipng/coding-standard temp/coding-standard --no-progress
 
 script:
   - ./vendor/bin/tester -s ./tests/
-  - ./vendor/bin/phpcs
   - ./vendor/bin/phpstan analyze -l 5 ./src/ ./tests/ --autoload-file=./vendor/autoload.php
+  - temp/coding-standard/phpcs ./src ./tests
 
 after_failure:
   # Vytiskne obsah souborů *.actual
