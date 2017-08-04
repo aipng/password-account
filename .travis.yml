@@ -17,11 +17,12 @@ before_install:
 
 install:
   - composer install --no-interaction --no-suggest --no-progress
+  - composer create-project phpstan/phpstan temp/phpstan --no-dev --no-progress
   - composer create-project aipng/coding-standard temp/coding-standard --no-progress
 
 script:
   - ./vendor/bin/tester -s ./tests/
-  - ./vendor/bin/phpstan analyze -l 5 ./src/ ./tests/ --autoload-file=./vendor/autoload.php
+  - temp/phpstan/bin/phpstan analyze -l 7 ./src
   - temp/coding-standard/phpcs ./src ./tests
 
 after_failure:
