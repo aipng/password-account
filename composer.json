@@ -2,7 +2,7 @@
 	"name": "aipng/password-account",
 	"description": "Password account management - standardize basic password handling for user accounts",
 	"type": "library",
-	"license": "BSD",
+	"license": "MIT",
 	"authors": [
 		{
 			"name": "Karel Horsky",
