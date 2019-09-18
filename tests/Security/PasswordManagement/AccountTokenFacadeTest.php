@@ -75,7 +75,7 @@ final class AccountTokenFacadeTest extends TestCase
 
 		$facade = new AccountTokenFacade($this->mockGenerator($secureToken), $accountFacade, $this->getEventDispatcherMock());
 
-		Assert::exception(function () use ($facade, $account) {
+		Assert::exception(function () use ($facade, $account): void {
 			$facade->generateTokenForAccount($account);
 		}, AccountNotSavedException::class);
 	}

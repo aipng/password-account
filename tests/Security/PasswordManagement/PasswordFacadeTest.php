@@ -76,7 +76,7 @@ final class PasswordFacadeTest extends TestCase
 			$this->getEventDispatcherMock()
 		);
 
-		Assert::exception(function () use ($facade, $userName) {
+		Assert::exception(function () use ($facade, $userName): void {
 			$facade->changePassword($userName, 'current-password', 'new-password');
 		}, AccountNotFoundException::class);
 	}
@@ -104,7 +104,7 @@ final class PasswordFacadeTest extends TestCase
 			$this->getEventDispatcherMock()
 		);
 
-		Assert::exception(function () use ($facade, $userName, $currentPassword, $newPassword) {
+		Assert::exception(function () use ($facade, $userName, $currentPassword, $newPassword): void {
 			$facade->changePassword($userName, $currentPassword, $newPassword);
 		}, PasswordNotMatchException::class);
 	}
@@ -133,7 +133,7 @@ final class PasswordFacadeTest extends TestCase
 			$this->getEventDispatcherMock()
 		);
 
-		Assert::exception(function () use ($facade, $userName, $currentPassword, $newPassword) {
+		Assert::exception(function () use ($facade, $userName, $currentPassword, $newPassword): void {
 			$facade->changePassword($userName, $currentPassword, $newPassword);
 		}, AccountNotSavedException::class);
 	}
@@ -188,7 +188,7 @@ final class PasswordFacadeTest extends TestCase
 			$this->getEventDispatcherMock()
 		);
 
-		Assert::exception(function () use ($facade, $token) {
+		Assert::exception(function () use ($facade, $token): void {
 			$facade->changePasswordWithToken($token, 'new-password');
 		}, AccountNotFoundException::class);
 	}
@@ -215,7 +215,7 @@ final class PasswordFacadeTest extends TestCase
 			$this->getEventDispatcherMock()
 		);
 
-		Assert::exception(function () use ($facade, $token, $newPassword) {
+		Assert::exception(function () use ($facade, $token, $newPassword): void {
 			$facade->changePasswordWithToken($token, $newPassword);
 		}, TokenNotMatchException::class);
 	}
@@ -242,7 +242,7 @@ final class PasswordFacadeTest extends TestCase
 			$this->getEventDispatcherMock()
 		);
 
-		Assert::exception(function () use ($facade, $token, $newPassword) {
+		Assert::exception(function () use ($facade, $token, $newPassword): void {
 			$facade->changePasswordWithToken($token, $newPassword);
 		}, TokenExpiredException::class);
 	}
@@ -273,7 +273,7 @@ final class PasswordFacadeTest extends TestCase
 			$this->getEventDispatcherMock()
 		);
 
-		Assert::exception(function () use ($facade, $token, $newPassword) {
+		Assert::exception(function () use ($facade, $token, $newPassword): void {
 			$facade->changePasswordWithToken($token, $newPassword);
 		}, AccountNotSavedException::class);
 	}

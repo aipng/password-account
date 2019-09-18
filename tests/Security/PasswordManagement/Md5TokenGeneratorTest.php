@@ -6,8 +6,8 @@ namespace AipNg\Tests\Security\PasswordManagement;
 
 require __DIR__ . '/../../bootstrap.php';
 
-use AipNg\DateTimeProvider\DateTimeProvider;
 use AipNg\Security\PasswordManagement\Md5TokenGenerator;
+use Kdyby\DateTimeProvider\DateTimeProviderInterface;
 use Tester\Assert;
 use Tester\TestCase;
 
@@ -18,7 +18,7 @@ final class Md5TokenGeneratorTest extends TestCase
 	{
 		$date = new \DateTimeImmutable;
 
-		$dateTimeProvider = \Mockery::mock(DateTimeProvider::class);
+		$dateTimeProvider = \Mockery::mock(DateTimeProviderInterface::class);
 		$dateTimeProvider
 			->shouldReceive('getDateTime')
 			->once()
@@ -39,7 +39,7 @@ final class Md5TokenGeneratorTest extends TestCase
 	{
 		$date = new \DateTimeImmutable;
 
-		$dateTimeProvider = \Mockery::mock(DateTimeProvider::class);
+		$dateTimeProvider = \Mockery::mock(DateTimeProviderInterface::class);
 		$dateTimeProvider
 			->shouldReceive('getDateTime')
 			->once()

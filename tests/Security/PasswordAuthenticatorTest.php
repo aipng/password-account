@@ -19,7 +19,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Tester\Assert;
 use Tester\TestCase;
 
-class PasswordAuthenticatorTest extends TestCase
+final class PasswordAuthenticatorTest extends TestCase
 {
 
 	private const USER_NAME = 'user-name';
@@ -35,7 +35,7 @@ class PasswordAuthenticatorTest extends TestCase
 			->shouldReceive('verifyPassword')
 			->once()
 			->with(self::PASSWORD, $hashProvider)
-			->andReturn(TRUE);
+			->andReturn(true);
 
 		$repository = \Mockery::mock(AccountRepository::class);
 		$repository
@@ -62,7 +62,7 @@ class PasswordAuthenticatorTest extends TestCase
 
 		$authenticator = new PasswordAuthenticator($repository, $hashProvider, $this->getEventDispatcherMock());
 
-		$e = Assert::exception(function () use ($authenticator) {
+		$e = Assert::exception(function () use ($authenticator): void {
 			$authenticator->authenticate([self::USER_NAME, self::PASSWORD]);
 		}, AuthenticationException::class);
 
@@ -79,7 +79,7 @@ class PasswordAuthenticatorTest extends TestCase
 			->shouldReceive('verifyPassword')
 			->once()
 			->with(self::PASSWORD, $hashProvider)
-			->andReturn(FALSE);
+			->andReturn(false);
 
 		$repository = \Mockery::mock(AccountRepository::class);
 		$repository
@@ -96,7 +96,7 @@ class PasswordAuthenticatorTest extends TestCase
 
 		$authenticator = new PasswordAuthenticator($repository, $hashProvider, $eventDispatcher);
 
-		$e = Assert::exception(function () use ($authenticator) {
+		$e = Assert::exception(function () use ($authenticator): void {
 			$authenticator->authenticate([self::USER_NAME, self::PASSWORD]);
 		}, AuthenticationException::class);
 
@@ -118,7 +118,7 @@ class PasswordAuthenticatorTest extends TestCase
 
 		$authenticator = new PasswordAuthenticator($repository, $hashProvider, $this->getEventDispatcherMock());
 
-		$e = Assert::exception(function () use ($authenticator) {
+		$e = Assert::exception(function () use ($authenticator): void {
 			$authenticator->authenticate([self::USER_NAME, self::PASSWORD]);
 		}, AuthenticationException::class);
 

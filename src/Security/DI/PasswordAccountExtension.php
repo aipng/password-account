@@ -4,8 +4,6 @@ declare(strict_types = 1);
 
 namespace AipNg\Security\DI;
 
-use AipNg\DateTimeProvider\CurrentDateTimeProvider;
-use AipNg\DateTimeProvider\DateTimeProvider;
 use AipNg\Security\DefaultHashProvider;
 use AipNg\Security\PasswordAuthenticator;
 use AipNg\Security\PasswordHashProvider;
@@ -13,6 +11,7 @@ use AipNg\Security\PasswordManagement\AccountTokenFacade;
 use AipNg\Security\PasswordManagement\Md5TokenGenerator;
 use AipNg\Security\PasswordManagement\PasswordFacade;
 use AipNg\Security\PasswordManagement\TokenGenerator;
+use Kdyby\DateTimeProvider\DateTimeProviderInterface;
 use Nette\DI\CompilerExtension;
 use Nette\DI\MissingServiceException;
 use Nette\DI\Statement;
@@ -34,7 +33,7 @@ final class PasswordAccountExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		try {
-			$builder->getDefinitionByType(DateTimeProvider::class);
+			$builder->getDefinitionByType(DateTimeProviderInterface::class);
 		} catch (MissingServiceException $e) {
 			$this->addDefaultDateTimeProvider();
 		}
@@ -70,7 +69,7 @@ final class PasswordAccountExtension extends CompilerExtension
 		$this
 			->getContainerBuilder()
 			->addDefinition($this->prefix('dateTimeProvider'))
-			->setClass(CurrentDateTimeProvider::class);
+			->setClass(DateTimeProviderInterface::class);
 	}
 
 

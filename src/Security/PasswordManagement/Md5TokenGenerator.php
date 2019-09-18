@@ -4,23 +4,22 @@ declare(strict_types = 1);
 
 namespace AipNg\Security\PasswordManagement;
 
-use AipNg\DateTimeProvider\DateTimeProvider;
+use Kdyby\DateTimeProvider\DateTimeProviderInterface;
 use Nette\Utils\Random;
 
-final class Md5TokenGenerator implements
-	\AipNg\Security\PasswordManagement\TokenGenerator
+final class Md5TokenGenerator implements TokenGenerator
 {
 
 	public const DEFAULT_EXPIRATION = 'PT1H';
 
-	/** @var \AipNg\DateTimeProvider\DateTimeProvider */
+	/** @var \Kdyby\DateTimeProvider\DateTimeProviderInterface */
 	private $dateTimeProvider;
 
 	/** @var \DateInterval */
 	private $expirationPeriod;
 
 
-	public function __construct(DateTimeProvider $dateTimeProvider, ?\DateInterval $interval = NULL)
+	public function __construct(DateTimeProviderInterface $dateTimeProvider, ?\DateInterval $interval = null)
 	{
 		$this->dateTimeProvider = $dateTimeProvider;
 		$this->expirationPeriod = $interval ?: new \DateInterval(self::DEFAULT_EXPIRATION);
